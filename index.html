@@ -5,370 +5,370 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>The Bantaeng Digital Map</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
     *{
       margin:0;
       padding:0;
       box-sizing:border-box;
-      font-family: "Poppins", sans-serif;
     }
 
     body{
+      font-family:'Poppins', sans-serif;
       background:
-      linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.65)),
-      url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop');
-      background-size:cover;
-      background-position:center;
-      min-height:100vh;
+        linear-gradient(
+          180deg,
+          #fff9e6 0%,
+          #fff5cc 30%,
+          #f6ffe8 100%
+        );
+      color:#2f2f2f;
       overflow-x:hidden;
-      color:white;
     }
 
-    .overlay{
-      width:100%;
-      min-height:100vh;
-      backdrop-filter: blur(3px);
-      padding:40px;
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:
+        radial-gradient(circle at top left, rgba(255,215,0,0.25), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(0,128,0,0.15), transparent 35%),
+        radial-gradient(circle at center, rgba(255,0,0,0.06), transparent 40%);
+      z-index:-1;
     }
 
-    .title{
-      text-align:center;
-      margin-bottom:40px;
-      animation: fadeDown 1s ease;
-    }
-
-    .title h1{
-      font-size:3.5rem;
-      color:#ffd700;
-      letter-spacing:4px;
-      text-shadow:0 0 20px rgba(255,215,0,0.6);
-    }
-
-    .title p{
-      margin-top:10px;
-      color:#f5f5f5;
-      font-size:1rem;
-      letter-spacing:2px;
-    }
-
-    .map-container{
-      position:relative;
+    .container{
       width:100%;
       max-width:1200px;
       margin:auto;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      min-height:600px;
+      padding:25px;
     }
 
-    .map{
+    .hero{
+      text-align:center;
+      padding:40px 20px 20px;
+    }
+
+    .hero h1{
+      font-size:clamp(2rem, 5vw, 4rem);
+      font-weight:700;
+      color:#c79a00;
+      letter-spacing:1px;
+      text-shadow:0 4px 15px rgba(255,215,0,0.3);
+    }
+
+    .hero p{
+      margin-top:12px;
+      color:#5a5a5a;
+      font-size:0.95rem;
+      line-height:1.7;
+      max-width:700px;
+      margin-inline:auto;
+    }
+
+    .map-box{
+      margin-top:40px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+      gap:25px;
+    }
+
+    .location-card{
       position:relative;
-      width:100%;
-      height:600px;
-      border:2px solid rgba(255,255,255,0.2);
-      border-radius:30px;
-      background:
-      linear-gradient(145deg,
-      rgba(0,128,0,0.25),
-      rgba(255,215,0,0.08),
-      rgba(255,0,0,0.08));
-      overflow:hidden;
-      box-shadow:0 0 40px rgba(0,0,0,0.5);
-    }
-
-    .map::before{
-      content:"BANTAENG";
-      position:absolute;
-      top:50%;
-      left:50%;
-      transform:translate(-50%,-50%);
-      font-size:7rem;
-      font-weight:bold;
-      color:rgba(255,255,255,0.05);
-      letter-spacing:10px;
-    }
-
-    .location{
-      position:absolute;
-      cursor:pointer;
-      transition:0.4s;
-    }
-
-    .location span{
-      display:inline-block;
-      padding:14px 24px;
-      border-radius:50px;
-      background:rgba(255,215,0,0.12);
-      border:2px solid rgba(255,215,0,0.5);
-      color:#fff;
-      font-weight:bold;
-      letter-spacing:2px;
-      backdrop-filter:blur(6px);
-      transition:0.4s;
-      box-shadow:0 0 20px rgba(255,215,0,0.2);
-    }
-
-    .location:hover span,
-    .location:active span{
-      background:#ffd700;
-      color:#111;
-      transform:scale(1.1);
-      box-shadow:0 0 30px gold;
-    }
-
-    .card{
-      position:absolute;
-      width:340px;
-      background:rgba(15,15,15,0.95);
-      border:2px solid rgba(255,215,0,0.4);
       border-radius:24px;
       overflow:hidden;
-      opacity:0;
-      visibility:hidden;
-      transform:translateY(30px) scale(0.9);
+      min-height:420px;
+      cursor:pointer;
       transition:0.5s ease;
-      box-shadow:0 0 40px rgba(0,0,0,0.6);
-      z-index:10;
+      background:#fff;
+      border:2px solid rgba(255,215,0,0.4);
+      box-shadow:
+        0 10px 25px rgba(0,0,0,0.08),
+        0 0 25px rgba(255,215,0,0.08);
     }
 
-    .location:hover .card,
-    .location:active .card{
-      opacity:1;
-      visibility:visible;
-      transform:translateY(0) scale(1);
+    .location-card:hover{
+      transform:translateY(-8px) scale(1.01);
     }
 
-    .card img{
+    .location-card img{
       width:100%;
-      height:200px;
+      height:100%;
       object-fit:cover;
+      position:absolute;
+      inset:0;
+      transition:1s ease;
+      filter:brightness(0.45);
     }
 
-    .card-content{
-      padding:20px;
+    .location-card:hover img,
+    .location-card:active img{
+      transform:scale(1.08);
+      filter:brightness(0.7);
     }
 
-    .card-content h2{
-      color:#ffd700;
-      margin-bottom:10px;
+    .overlay{
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(
+          to top,
+          rgba(0,0,0,0.88),
+          rgba(0,0,0,0.25),
+          rgba(0,0,0,0.1)
+        );
+      padding:25px;
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-end;
+      transition:0.5s ease;
+    }
+
+    .location-card:hover .overlay{
+      background:
+        linear-gradient(
+          to top,
+          rgba(0,0,0,0.95),
+          rgba(0,0,0,0.3),
+          rgba(0,0,0,0.05)
+        );
+    }
+
+    .tag{
+      display:inline-block;
+      background:#ffd700;
+      color:#7a0000;
+      padding:6px 14px;
+      border-radius:50px;
+      font-size:0.75rem;
+      font-weight:600;
+      margin-bottom:14px;
+      width:max-content;
+    }
+
+    .overlay h2{
+      color:#fff;
       font-size:1.8rem;
+      margin-bottom:10px;
     }
 
-    .card-content p{
-      font-size:0.92rem;
-      line-height:1.7;
-      color:#e8e8e8;
-    }
-
-    .highlight{
-      margin-top:15px;
-      padding:12px;
-      border-left:4px solid #ff3c3c;
-      background:rgba(255,255,255,0.05);
-      border-radius:10px;
+    .overlay p{
       color:#f0f0f0;
+      font-size:0.88rem;
+      line-height:1.7;
+      opacity:0.9;
     }
 
-    /* POSISI */
-
-    .seruni{
-      top:18%;
-      left:12%;
+    .info-list{
+      margin-top:16px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
     }
 
-    .seruni .card{
-      top:70px;
-      left:0;
+    .info-item{
+      background:rgba(255,255,255,0.08);
+      border-left:3px solid #ffd700;
+      padding:10px 12px;
+      border-radius:10px;
+      color:#fff;
+      font-size:0.8rem;
+      line-height:1.5;
+      backdrop-filter:blur(4px);
+      transform:translateY(25px);
+      opacity:0;
+      transition:0.5s ease;
     }
 
-    .eremes{
-      top:45%;
-      left:55%;
+    .location-card:hover .info-item,
+    .location-card:active .info-item{
+      transform:translateY(0);
+      opacity:1;
     }
 
-    .eremes .card{
-      bottom:70px;
-      right:0;
+    .location-card:hover .info-item:nth-child(1){
+      transition-delay:0.1s;
     }
 
-    .loka{
-      bottom:12%;
-      left:25%;
+    .location-card:hover .info-item:nth-child(2){
+      transition-delay:0.2s;
     }
 
-    .loka .card{
-      top:-20px;
-      left:120px;
+    .location-card:hover .info-item:nth-child(3){
+      transition-delay:0.3s;
     }
 
     .footer{
       text-align:center;
-      margin-top:40px;
-      color:#ddd;
-      letter-spacing:2px;
-      opacity:0.8;
+      padding:50px 20px 30px;
+      color:#777;
+      font-size:0.85rem;
     }
 
-    @keyframes fadeDown{
-      from{
-        opacity:0;
-        transform:translateY(-40px);
-      }
-      to{
-        opacity:1;
-        transform:translateY(0);
-      }
+    .glow{
+      position:absolute;
+      width:180px;
+      height:180px;
+      background:rgba(255,215,0,0.2);
+      border-radius:50%;
+      filter:blur(70px);
+      top:-40px;
+      right:-40px;
     }
 
-    @media(max-width:900px){
+    @media(max-width:768px){
 
-      .title h1{
-        font-size:2.2rem;
+      .container{
+        padding:18px;
       }
 
-      .map{
-        height:900px;
+      .hero{
+        padding-top:25px;
       }
 
-      .location{
-        position:relative;
-        display:block;
-        margin:30px auto;
-        width:90%;
+      .location-card{
+        min-height:390px;
       }
 
-      .seruni,
-      .eremes,
-      .loka{
-        top:auto;
-        left:auto;
-        bottom:auto;
+      .overlay{
+        padding:20px;
       }
 
-      .card{
-        position:relative;
-        width:100%;
-        margin-top:20px;
-        opacity:1;
-        visibility:visible;
-        transform:none;
+      .overlay h2{
+        font-size:1.5rem;
       }
 
-      .seruni .card,
-      .eremes .card,
-      .loka .card{
-        top:auto;
-        left:auto;
-        right:auto;
-        bottom:auto;
+      .overlay p{
+        font-size:0.82rem;
       }
 
+      .info-item{
+        font-size:0.76rem;
+      }
     }
 
   </style>
 </head>
 <body>
 
-  <div class="overlay">
+  <div class="container">
 
-    <div class="title">
-      <h1>THE BANTAENG DIGITAL MAP</h1>
-      <p>Hidden Paradise of South Sulawesi ✦</p>
-    </div>
+    <section class="hero">
+      <h1>The Bantaeng Digital Map</h1>
+      <p>
+        Jelajahi keindahan Bantaeng hanya dengan menyentuh nama lokasi.
+        Dari pantai bercahaya senja, permandian alami yang menenangkan,
+        hingga pegunungan hijau yang menyegarkan jiwa. ✨
+      </p>
+    </section>
 
-    <div class="map">
+    <section class="map-box">
 
       <!-- SERUNI -->
-      <div class="location seruni">
+      <div class="location-card">
+        <div class="glow"></div>
 
-        <span>📍 SERUNI</span>
+        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop" alt="Pantai Seruni">
 
-        <div class="card">
-          <img src="seruni.jpg" alt="Pantai Seruni">
+        <div class="overlay">
+          <span class="tag">Pantai & Kuliner</span>
 
-          <div class="card-content">
-            <h2>Pantai Seruni</h2>
+          <h2>Seruni</h2>
 
-            <p>
-              Pantai Seruni merupakan ikon wisata pesisir di Kabupaten
-              Bantaeng yang membentang di dekat alun-alun kota.
-              Dulunya kawasan ini penuh semak dan terlihat kumuh,
-              namun setelah reklamasi besar-besaran, Seruni berubah
-              menjadi kawasan modern dengan nuansa laut yang elegan.
-            </p>
+          <p>
+            Pantai ikonik Bantaeng yang terkenal dengan suasana sore,
+            lampu malam warna-warni, dan jalur jogging menghadap laut.
+          </p>
 
-            <div class="highlight">
-              ✦ Spot selfie batu “Pantai Seruni” yang terkenal.<br>
-              ✦ Kuliner sore dan malam dengan lampu warna-warni.<br>
-              ✦ Area jogging, basket, voli, dan futsal dengan view laut.
+          <div class="info-list">
+            <div class="info-item">
+              📸 Spot foto batu “Pantai Seruni” jadi favorit wisatawan.
             </div>
 
+            <div class="info-item">
+              🍢 Ramai kuliner lokal saat sore hingga malam hari.
+            </div>
+
+            <div class="info-item">
+              🏀 Memiliki jogging track dan area olahraga terbuka.
+            </div>
           </div>
         </div>
       </div>
 
       <!-- EREMERASA -->
-      <div class="location eremes">
+      <div class="location-card">
+        <div class="glow"></div>
 
-        <span>🌿 EREMERASA</span>
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop" alt="Eremerasa">
 
-        <div class="card">
-          <img src="eremes.jpg" alt="Eremerasa">
+        <div class="overlay">
+          <span class="tag">Healing Nature</span>
 
-          <div class="card-content">
-            <h2>Permandian Ermes</h2>
+          <h2>Eremerasa</h2>
 
-            <p>
-              Eremerasa dikenal dengan suasana alam yang sejuk,
-              pepohonan hijau yang rapat, dan mata air alami yang
-              sangat jernih. Permandian Ermes menjadi tempat favorit
-              warga untuk healing dan melupakan hiruk-pikuk kota.
-            </p>
+          <p>
+            Kecamatan dengan suasana alam yang sejuk dan terkenal
+            lewat Permandian Ermes yang memiliki mata air alami jernih.
+          </p>
 
-            <div class="highlight">
-              ✦ Air alami yang dingin dan menyegarkan.<br>
-              ✦ Dikelilingi hutan tropis yang rindang.<br>
-              ✦ Tempat santai favorit keluarga dan wisatawan lokal.
+          <div class="info-list">
+            <div class="info-item">
+              💧 Air permandian alami terasa segar dan menenangkan.
             </div>
 
+            <div class="info-item">
+              🌿 Cocok untuk healing bersama teman dan keluarga.
+            </div>
+
+            <div class="info-item">
+              ☁️ Dikelilingi suasana hijau dan udara yang menyejukkan.
+            </div>
           </div>
         </div>
       </div>
 
       <!-- LOKA -->
-      <div class="location loka">
+      <div class="location-card">
+        <div class="glow"></div>
 
-        <span>⛰ LOKA</span>
+        <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1200&auto=format&fit=crop" alt="Loka Bantaeng">
 
-        <div class="card">
-          <img src="loka.jpg" alt="Loka">
+        <div class="overlay">
+          <span class="tag">Mountain Adventure</span>
 
-          <div class="card-content">
-            <h2>Gunung Loka</h2>
+          <h2>Loka</h2>
 
-            <p>
-              Loka adalah wilayah pegunungan Bantaeng yang terkenal
-              dengan udara dingin, perkebunan hijau, dan jalur pendakian.
-              Gunung Loka menjadi tempat favorit pendaki lokal karena
-              jalurnya menantang namun tetap ramah bagi pemula.
-            </p>
+          <p>
+            Kawasan dataran tinggi Bantaeng yang terkenal dengan
+            Gunung Loka dan panorama hijau khas pegunungan Sulawesi.
+          </p>
 
-            <div class="highlight">
-              ✦ Sunrise pegunungan yang luar biasa indah.<br>
-              ✦ Jalur camping dan pendakian favorit Sulawesi Selatan.<br>
-              ✦ Udara sejuk dan panorama hijau yang menenangkan.
+          <div class="info-list">
+            <div class="info-item">
+              ⛰️ Jalur pendakian menantang namun ramah pemula.
             </div>
 
+            <div class="info-item">
+              🌄 Sunrise dari puncak menjadi momen favorit pendaki.
+            </div>
+
+            <div class="info-item">
+              🍃 Udara dingin dan flora hijau membuat suasana sangat tenang.
+            </div>
           </div>
         </div>
       </div>
 
-    </div>
+    </section>
 
-    <div class="footer">
-      Explore Bantaeng Through Hidden Touch ✦
-    </div>
+    <section class="footer">
+      <p>
+        ✨ Explore Bantaeng Through Digital Touch ✨
+      </p>
+    </section>
 
   </div>
 
