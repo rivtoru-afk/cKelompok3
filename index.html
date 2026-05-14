@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Bantaeng Digital Map</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body{
+      background:
+      linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.65)),
+      url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop');
+      background-size:cover;
+      background-position:center;
+      min-height:100vh;
+      overflow-x:hidden;
+      color:white;
+    }
+
+    .overlay{
+      width:100%;
+      min-height:100vh;
+      backdrop-filter: blur(3px);
+      padding:40px;
+    }
+
+    .title{
+      text-align:center;
+      margin-bottom:40px;
+      animation: fadeDown 1s ease;
+    }
+
+    .title h1{
+      font-size:3.5rem;
+      color:#ffd700;
+      letter-spacing:4px;
+      text-shadow:0 0 20px rgba(255,215,0,0.6);
+    }
+
+    .title p{
+      margin-top:10px;
+      color:#f5f5f5;
+      font-size:1rem;
+      letter-spacing:2px;
+    }
+
+    .map-container{
+      position:relative;
+      width:100%;
+      max-width:1200px;
+      margin:auto;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:600px;
+    }
+
+    .map{
+      position:relative;
+      width:100%;
+      height:600px;
+      border:2px solid rgba(255,255,255,0.2);
+      border-radius:30px;
+      background:
+      linear-gradient(145deg,
+      rgba(0,128,0,0.25),
+      rgba(255,215,0,0.08),
+      rgba(255,0,0,0.08));
+      overflow:hidden;
+      box-shadow:0 0 40px rgba(0,0,0,0.5);
+    }
+
+    .map::before{
+      content:"BANTAENG";
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%);
+      font-size:7rem;
+      font-weight:bold;
+      color:rgba(255,255,255,0.05);
+      letter-spacing:10px;
+    }
+
+    .location{
+      position:absolute;
+      cursor:pointer;
+      transition:0.4s;
+    }
+
+    .location span{
+      display:inline-block;
+      padding:14px 24px;
+      border-radius:50px;
+      background:rgba(255,215,0,0.12);
+      border:2px solid rgba(255,215,0,0.5);
+      color:#fff;
+      font-weight:bold;
+      letter-spacing:2px;
+      backdrop-filter:blur(6px);
+      transition:0.4s;
+      box-shadow:0 0 20px rgba(255,215,0,0.2);
+    }
+
+    .location:hover span,
+    .location:active span{
+      background:#ffd700;
+      color:#111;
+      transform:scale(1.1);
+      box-shadow:0 0 30px gold;
+    }
+
+    .card{
+      position:absolute;
+      width:340px;
+      background:rgba(15,15,15,0.95);
+      border:2px solid rgba(255,215,0,0.4);
+      border-radius:24px;
+      overflow:hidden;
+      opacity:0;
+      visibility:hidden;
+      transform:translateY(30px) scale(0.9);
+      transition:0.5s ease;
+      box-shadow:0 0 40px rgba(0,0,0,0.6);
+      z-index:10;
+    }
+
+    .location:hover .card,
+    .location:active .card{
+      opacity:1;
+      visibility:visible;
+      transform:translateY(0) scale(1);
+    }
+
+    .card img{
+      width:100%;
+      height:200px;
+      object-fit:cover;
+    }
+
+    .card-content{
+      padding:20px;
+    }
+
+    .card-content h2{
+      color:#ffd700;
+      margin-bottom:10px;
+      font-size:1.8rem;
+    }
+
+    .card-content p{
+      font-size:0.92rem;
+      line-height:1.7;
+      color:#e8e8e8;
+    }
+
+    .highlight{
+      margin-top:15px;
+      padding:12px;
+      border-left:4px solid #ff3c3c;
+      background:rgba(255,255,255,0.05);
+      border-radius:10px;
+      color:#f0f0f0;
+    }
+
+    /* POSISI */
+
+    .seruni{
+      top:18%;
+      left:12%;
+    }
+
+    .seruni .card{
+      top:70px;
+      left:0;
+    }
+
+    .eremes{
+      top:45%;
+      left:55%;
+    }
+
+    .eremes .card{
+      bottom:70px;
+      right:0;
+    }
+
+    .loka{
+      bottom:12%;
+      left:25%;
+    }
+
+    .loka .card{
+      top:-20px;
+      left:120px;
+    }
+
+    .footer{
+      text-align:center;
+      margin-top:40px;
+      color:#ddd;
+      letter-spacing:2px;
+      opacity:0.8;
+    }
+
+    @keyframes fadeDown{
+      from{
+        opacity:0;
+        transform:translateY(-40px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
+    @media(max-width:900px){
+
+      .title h1{
+        font-size:2.2rem;
+      }
+
+      .map{
+        height:900px;
+      }
+
+      .location{
+        position:relative;
+        display:block;
+        margin:30px auto;
+        width:90%;
+      }
+
+      .seruni,
+      .eremes,
+      .loka{
+        top:auto;
+        left:auto;
+        bottom:auto;
+      }
+
+      .card{
+        position:relative;
+        width:100%;
+        margin-top:20px;
+        opacity:1;
+        visibility:visible;
+        transform:none;
+      }
+
+      .seruni .card,
+      .eremes .card,
+      .loka .card{
+        top:auto;
+        left:auto;
+        right:auto;
+        bottom:auto;
+      }
+
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="overlay">
+
+    <div class="title">
+      <h1>THE BANTAENG DIGITAL MAP</h1>
+      <p>Hidden Paradise of South Sulawesi ✦</p>
+    </div>
+
+    <div class="map">
+
+      <!-- SERUNI -->
+      <div class="location seruni">
+
+        <span>📍 SERUNI</span>
+
+        <div class="card">
+          <img src="seruni.jpg" alt="Pantai Seruni">
+
+          <div class="card-content">
+            <h2>Pantai Seruni</h2>
+
+            <p>
+              Pantai Seruni merupakan ikon wisata pesisir di Kabupaten
+              Bantaeng yang membentang di dekat alun-alun kota.
+              Dulunya kawasan ini penuh semak dan terlihat kumuh,
+              namun setelah reklamasi besar-besaran, Seruni berubah
+              menjadi kawasan modern dengan nuansa laut yang elegan.
+            </p>
+
+            <div class="highlight">
+              ✦ Spot selfie batu “Pantai Seruni” yang terkenal.<br>
+              ✦ Kuliner sore dan malam dengan lampu warna-warni.<br>
+              ✦ Area jogging, basket, voli, dan futsal dengan view laut.
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- EREMERASA -->
+      <div class="location eremes">
+
+        <span>🌿 EREMERASA</span>
+
+        <div class="card">
+          <img src="eremes.jpg" alt="Eremerasa">
+
+          <div class="card-content">
+            <h2>Permandian Ermes</h2>
+
+            <p>
+              Eremerasa dikenal dengan suasana alam yang sejuk,
+              pepohonan hijau yang rapat, dan mata air alami yang
+              sangat jernih. Permandian Ermes menjadi tempat favorit
+              warga untuk healing dan melupakan hiruk-pikuk kota.
+            </p>
+
+            <div class="highlight">
+              ✦ Air alami yang dingin dan menyegarkan.<br>
+              ✦ Dikelilingi hutan tropis yang rindang.<br>
+              ✦ Tempat santai favorit keluarga dan wisatawan lokal.
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- LOKA -->
+      <div class="location loka">
+
+        <span>⛰ LOKA</span>
+
+        <div class="card">
+          <img src="loka.jpg" alt="Loka">
+
+          <div class="card-content">
+            <h2>Gunung Loka</h2>
+
+            <p>
+              Loka adalah wilayah pegunungan Bantaeng yang terkenal
+              dengan udara dingin, perkebunan hijau, dan jalur pendakian.
+              Gunung Loka menjadi tempat favorit pendaki lokal karena
+              jalurnya menantang namun tetap ramah bagi pemula.
+            </p>
+
+            <div class="highlight">
+              ✦ Sunrise pegunungan yang luar biasa indah.<br>
+              ✦ Jalur camping dan pendakian favorit Sulawesi Selatan.<br>
+              ✦ Udara sejuk dan panorama hijau yang menenangkan.
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      Explore Bantaeng Through Hidden Touch ✦
+    </div>
+
+  </div>
+
+</body>
+</html>
